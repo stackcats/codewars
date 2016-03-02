@@ -1,7 +1,7 @@
 # from https://en.wikipedia.org/wiki/Fibonacci_number
 # F(2n) = F(n) * (2 * F(n-1) + F(n))
 # F(2n-1) = F(n)^2 + F(n-1)^2
-# F(-n) = -1^(n+1) * F(n) (n < 0)
+# F(-n) = -1^(n+1) * F(n) (n > 0)
 mem = {0: 0L, 1: 1L}
 def fib(n):
   if n in mem: 
