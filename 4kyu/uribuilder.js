@@ -1,5 +1,6 @@
 // TODO: create UriBuilder object
 /*
+ RFC1738
  Only alphanumerics [0-9a-zA-Z], 
  the special characters "$-_.+!*’()," [not including the quotes - ed], 
  and reserved characters "&/:;=?@" 
