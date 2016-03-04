@@ -1,1 +1,2 @@
 # codewars
+Don't cheat.
