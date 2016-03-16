@@ -4,6 +4,7 @@ function interpret(code) {
   var arr = code.split('\n').map(function(each) {
     return each.split('');
   });
+
   
   var pos = { x: 0, y: 0 };
   var dir = 'right';
