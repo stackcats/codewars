@@ -21,7 +21,7 @@ function VigenèreCipher(key, abc) {
       if (abc.indexOf(c) === -1 || abc.indexOf(p) === -1) {
         ans += c;
       } else {
-        ans += abc[(abc.indexOf(c) - abc.indexOf(p)) % abc.length];
+        ans += abc[(abc.indexOf(c) - abc.indexOf(p) + abc.length) % abc.length];
       }
     }
     return ans;
