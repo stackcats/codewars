@@ -80,11 +80,8 @@ class Interpreter {
     for (let i = 0; i < block.length; i++) {
       token = block[i];
       if (/^[a-zA-Z]*$/.test(token)) {
-        if (paramObj[token] === undefined && this.vars[token] === undefined) {
+        if (paramObj[token] === undefined) {
           throw new Error(`ERROR: Unknown identifier '${token}'`);
-        }
-        if (paramObj[token] === undefined && this.vars[token] !== undefined) {
-          block[i] = this.vars[token];
         }
       }
     }
