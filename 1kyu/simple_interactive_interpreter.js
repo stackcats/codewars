@@ -139,6 +139,10 @@ class Interpreter {
 
   parseAssignment(tokens) {
     const name = tokens.getToken();
+    if (this.functions[name] !== undefined) {
+      throw new Error(`Error: ${name} is a function`);
+    }
+
     tokens.getToken(); // pass `=`
     const v = this.parseExpression(tokens);
     this.vars[name] = v;
@@ -210,12 +214,7 @@ class Interpreter {
     const { params, block } = fn;
     const paramObj = {};
     for (const p of params) {
-      const v = tokens.getToken();
-      if (this.functions[v] !== undefined) {
-        paramObj[p] = this.parseExpression(tokens);
-      } else {
-        paramObj[p] = v;
-      }
+      paramObj[p] = this.parseExpression(tokens);
     }
     return this.parseExpression(new Token(block.join('')), paramObj);
   }
