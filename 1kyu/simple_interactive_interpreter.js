@@ -1,7 +1,7 @@
 class Token {
-  constructor(expr) {
+  constructor(expr = '') {
     const reg = /\s*([-+*\/%=\(\)]|[A-Za-z_][A-Za-z0-9_]*|[0-9]*\.?[0-9]+)\s*/g;
-    this.tokens = expr.split(reg).filter(each => !each.match(/^\s*$/));
+    this.tokens = String(expr).split(reg).filter(each => !each.match(/^\s*$/));
     this.idx = 0;
   }
 
@@ -20,6 +20,10 @@ class Token {
   copy() {
     return this.tokens.slice(this.idx);
   }
+
+  len() {
+    return this.tokens.length - this.idx;
+  }
 }
 
 class Interpreter {
@@ -29,22 +33,25 @@ class Interpreter {
   }
 
   input(expr) {
-    if (expr === '') return '';
     const tokens = new Token(expr);
-    console.log(tokens);
+    if (tokens.len() === 0) return '';
     const token = tokens.getToken();
     if (token === 'fn') {
       this.parseFunction(tokens);
       return '';
     }
     tokens.ungetToken();
-    return this.parseExpression(tokens);
+    const v = this.parseExpression(tokens);
+    if (tokens.len() !== 0) {
+      throw new Error(`Error: Illegal Expression ${expr}`);
+    }
+    return v;
   }
 
   parseFunction(tokens) {
     const fn = tokens.getToken();
     if (this.vars[fn] !== undefined) {
-      throw new Error(`${fn} is a variable`);
+      throw new Error(`Error: ${fn} is a variable`);
     }
 
     const params = [];
@@ -53,7 +60,7 @@ class Interpreter {
     let token = tokens.getToken();
     while (token !== '=') {
       if (paramObj[token] !== undefined) {
-        throw new Error('params conflict');
+        throw new Error(`Error: params conflict ${token}`);
       }
       paramObj[token] = 1;
       params.push(token);
@@ -62,12 +69,12 @@ class Interpreter {
 
     token = tokens.getToken();
     if (token !== '>') {
-      throw new Error('illegal fucntion definition');
+      throw new Error('Error: illegal fucntion definition');
     }
 
     const block = tokens.copy();
     if (block.length === 0) {
-      throw new Error('error');
+      throw new Error('Error: illegal functions definition');
     }
 
     for (let i = 0; i < block.length; i++) {
@@ -76,7 +83,7 @@ class Interpreter {
         if (paramObj[token] === undefined && this.vars[token] === undefined) {
           throw new Error(`ERROR: Unknown identifier '${token}'`);
         }
-        if (this.vars[token] !== undefined) {
+        if (paramObj[token] === undefined && this.vars[token] !== undefined) {
           block[i] = this.vars[token];
         }
       }
@@ -97,7 +104,7 @@ class Interpreter {
     let v1 = this.parseTerm(tokens, env);
 
     if (/^[a-zA-Z]*$/.test(v1)) {
-      throw new Error(`undefined variable '${v1}'`);
+      throw new Error(`Error: Undefined variable '${v1}'`);
     }
 
     for (;;) {
@@ -122,6 +129,7 @@ class Interpreter {
   }
 
   isAssignment(tokens) {
+    if (tokens.len() <= 2) return false;
     const _ = tokens.getToken();
     const token = tokens.getToken();
     tokens.ungetToken();
@@ -178,7 +186,6 @@ class Interpreter {
       v = Number(token);
       if (minusFlag) v = -v;
     } else if (/[a-zA-Z]/.test(token)) {
-      console.log('exp', token, env);
       if (this.functions[token] !== undefined) {
         const fn = this.functions[token];
         v = this.executeFunction(fn, tokens);
@@ -204,9 +211,12 @@ class Interpreter {
     const paramObj = {};
     for (const p of params) {
       const v = tokens.getToken();
-      paramObj[p] = v;
+      if (this.functions[v] !== undefined) {
+        paramObj[p] = this.parseExpression(tokens);
+      } else {
+        paramObj[p] = v;
+      }
     }
-    console.log('ppp', paramObj);
     return this.parseExpression(new Token(block.join('')), paramObj);
   }
 }
