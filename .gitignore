@@ -1,2 +1,5 @@
 .tern-port
 TAGS
+.DS_Store
+a.out
+*.txt
