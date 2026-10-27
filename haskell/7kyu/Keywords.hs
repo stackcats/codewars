@@ -1,0 +1,28 @@
+module Keywords (keywords) where
+
+keywords :: [String]
+keywords =
+  [ "case"
+  , "class"
+  , "data"
+  , "default"
+  , "deriving"
+  , "do"
+  , "else"
+  , "foreign"
+  , "if"
+  , "import"
+  , "in"
+  , "infix"
+  , "infixl"
+  , "infixr"
+  , "instance"
+  , "let"
+  , "module"
+  , "newtype"
+  , "of"
+  , "then"
+  , "type"
+  , "where"
+  , "_"
+  ]
