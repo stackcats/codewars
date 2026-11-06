@@ -10,7 +10,12 @@
 
   packages = [ ];
 
-  languages.haskell.enable = true;
+  languages.haskell = {
+    enable = true;
+    package = pkgs.haskellPackages.ghcWithPackages (hp: [
+      hp.split
+    ]);
+  };
 
   enterShell = ''
     ghc --version
